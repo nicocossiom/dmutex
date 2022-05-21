@@ -1,0 +1,37 @@
+make --dry-run --always-make --keep-going --print-directory
+cat: Controlador/.INDEX: No such file or directory
+
+cat: Proceso/.INDEX: No such file or directory
+
+make: Entering directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021'
+(for i in Proceso Controlador ; \
+          do /Library/Developer/CommandLineTools/usr/bin/make -C $i ; \
+          done)
+ 
+make[1]: Entering directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021/Proceso'
+cc -Wall -g   -c main.c 
+rm -f .INDEX
+(for i in main.o; \
+	do \
+	echo "Proceso/$i " >> .INDEX; \
+	done)
+make[1]: Leaving directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021/Proceso'
+make[1]: Entering directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021/Controlador'
+cc -Wall -g   -c fichero.c 
+cc -Wall -g   -c logger.c 
+cc -Wall -g   -c main.c 
+cc -Wall -g   -c procesos.c 
+ 
+rm -f .INDEX
+(for i in fichero.o logger.o main.o procesos.o; \
+	do \
+	echo "Controlador/$i " >> .INDEX; \
+	done)
+make[1]: Leaving directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021/Controlador'
+cc -Wall -g   -o proceso  -lpthread
+cc -Wall -g   -o controlador  -lpthread
+make: Leaving directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021'
+ 
+cat: Proceso/.INDEX: No such file or directory
+cat: Controlador/.INDEX: No such file or directory
+

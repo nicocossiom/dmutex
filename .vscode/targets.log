@@ -1,0 +1,1048 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# This program built for i386-apple-darwin11.3.0
+ 
+cat: Controlador/.INDEX: No such file or directory
+
+cat: Proceso/.INDEX: No such file or directory
+
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# This program built for i386-apple-darwin11.3.0
+ 
+
+# Make data base, printed on Sat May 21 11:55:43 2022
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# environment
+ELECTRON_NO_ATTACH_CONSOLE = 1
+# environment
+LC_CTYPE = UTF-8
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# makefile
+CURDIR := /Users/nicolascossio/UPM/ssdd/DMUTEX.2021/Proceso
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-gb","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /Library/Developer/CommandLineTools/usr/bin/make
+# makefile (from `../MakeVars', line 12)
+CFLAGS = -Wall -g $(INCLUDE) $(DEFINE)
+# makefile (from `../MakeVars', line 1)
+MAKEFILE_LIST :=  Makefile ../MakeVars
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+__CFBundleIdentifier = com.microsoft.VSCode
+# environment
+VSCODE_IPC_HOOK_EXTHOST = /var/folders/qz/r6rczvz16dd0xdb4zc7yh7580000gn/T/vscode-ipc-96e4e1e3-76ed-4fe6-b7b7-91b883da7e0f.sock
+# environment
+VSCODE_CWD = /Users/nicolascossio/UPM/ssdd/DMUTEX.2021
+# environment
+PATH = /opt/homebrew/opt/openjdk@11/bin:/Users/nicolascossio/.scripts:/opt/homebrew/opt/curl/bin:/opt/homebrew/opt/openssl@3/bin:/opt/homebrew/opt/openjdk/bin:/Users/nicolascossio/Library/Python/3.8/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/:/Library/TeX/texbin
+# makefile (from `../MakeVars', line 4)
+LD = ld
+# makefile (from `../MakeVars', line 13)
+ARFLAGS = 
+# makefile (from `Makefile', line 3)
+C_SRCS = $(shell ls *.c 2> /dev/null)
+# environment
+SSH_ENV = /Users/nicolascossio/.ssh/environment
+# makefile (from `../MakeVars', line 5)
+AR = ar 
+# environment
+VSCODE_LOG_STACK = false
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# makefile (from `../MakeVars', line 14)
+LDFLAGS = $(CFLAGS) $(LIBDIR)
+# makefile (from `../MakeVars', line 16)
+LIB = -lpthread
+# default
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
+# environment
+SSH_AUTH_SOCK = /var/folders/qz/r6rczvz16dd0xdb4zc7yh7580000gn/T//ssh-1r5w4gA9CNpW/agent.766
+# automatic
+%F = $(notdir $%)
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /Users/nicolascossio/UPM/ssdd/DMUTEX.2021
+# makefile (from `Makefile', line 4)
+C_OBJS = $(patsubst %.c,%.o,$(C_SRCS))
+# environment
+SSH_AGENT_PID = 768
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /Users/nicolascossio
+# default
+MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
+# environment
+VSCODE_CLI = 1
+# environment
+VSCODE_CODE_CACHE_PATH = /Users/nicolascossio/Library/Application Support/Code/CachedData/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5
+# environment
+LOGNAME = nicolascossio
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# makefile (from `../MakeVars', line 6)
+RANLIB = ranlib
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+XPC_FLAGS = 0x0
+# environment
+COLORTERM = truecolor
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+LC_TERMINAL = iTerm2
+# environment
+SHLVL = 4
+# makefile (from `../MakeVars', line 3)
+CC = cc
+# makefile (from `Makefile', line 5)
+CURR_DIR = $(shell basename `pwd`)
+# environment
+JAVA_HOME = /Users/nicolascossio/.jenv/versions/openjdk64-11.0.15
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = nicolascossio
+# makefile
+.DEFAULT_GOAL := all
+# makefile (from `../MakeVars', line 8)
+INCLUDE = 
+# environment
+TERM_SESSION_ID = w0t1p0:896BA228-7B18-45EB-9893-5BAE0C9625B4
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
+# makefile (from `../MakeVars', line 10)
+LIBDIR = 
+# environment
+TERM_PROGRAM = iTerm.app
+# default
+.VARIABLES := 
+# environment
+TMPDIR = /var/folders/qz/r6rczvz16dd0xdb4zc7yh7580000gn/T/
+# automatic
+*F = $(notdir $*)
+# makefile (from `../MakeVars', line 1)
+OS = $(shell uname -s)
+# environment
+VSCODE_IPC_HOOK = /Users/nicolascossio/Library/Application Support/Code/1.67.2-main.sock
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+TERM_PROGRAM_VERSION = 3.4.15
+# environment
+XPC_SERVICE_NAME = 0
+# environment
+LC_TERMINAL_VERSION = 3.4.15
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+ITERM_SESSION_ID = w0t1p0:896BA228-7B18-45EB-9893-5BAE0C9625B4
+# environment
+COLORFGBG = 7;0
+# environment
+__CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
+# environment
+COMMAND_MODE = unix2003
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# environment
+ITERM_PROFILE = Default
+# environment
+LC_ALL = C
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# makefile (from `../MakeVars', line 9)
+DEFINE = 
+# environment
+MAKELEVEL := 1
+# environment
+LANG = C
+# environment
+TERM = xterm-256color
+# environment
+VSCODE_PID = 85458
+# variable set hash-table stats:
+# Load=91/1024=9%, Rehash=0, Collisions=9/132=7%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 16777231, inode 14265311): 4 files, no impossibilities.
+
+# 4 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+%.o: %.c
+#  commands to execute (from `Makefile', line 17):
+	$(CC) $(CFLAGS) -c $< 
+	
+
+# 1 implicit rules, 0 (0.0%) terminal.
+
+# Files
+
+all: .INDEX main.o
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/6=0%
+
+# Not a target:
+main.c:
+#  Implicit rule search has been done.
+#  Last modified 2020-10-06 09:37:10
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2020-10-06 09:37:10
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+../MakeVars:
+#  Implicit rule search has been done.
+#  Last modified 2020-10-06 09:42:00
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+.INDEX: main.o
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/6=0%
+#  commands to execute (from `Makefile', line 10):
+	@rm -f .INDEX
+	@(for i in $(C_OBJS); \
+	do \
+	echo "$(CURR_DIR)/$$i " >> .INDEX; \
+	done)
+	
+
+main.o: main.c
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: `main'
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := main.o
+# automatic
+# % := 
+# automatic
+# * := main
+# automatic
+# + := main.c
+# automatic
+# | := 
+# automatic
+# < := main.c
+# automatic
+# ^ := main.c
+# automatic
+# ? := main.c
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=3/15=20%
+#  commands to execute (from `Makefile', line 17):
+	$(CC) $(CFLAGS) -c $< 
+	
+
+clean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 20):
+	rm -f *.o
+	rm -f *~ .INDEX
+	
+
+# files hash-table stats:
+# Load=9/1024=1%, Rehash=0, Collisions=1/28=4%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 2
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+# strcache free: total = 4075 / max = 4075 / min = 4075 / avg = 4075
+
+# Finished Make data base on Sat May 21 11:55:43 2022
+
+ 
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# This program built for i386-apple-darwin11.3.0
+ 
+
+# Make data base, printed on Sat May 21 11:55:43 2022
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# environment
+ELECTRON_NO_ATTACH_CONSOLE = 1
+# environment
+LC_CTYPE = UTF-8
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# makefile
+CURDIR := /Users/nicolascossio/UPM/ssdd/DMUTEX.2021/Controlador
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-gb","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /Library/Developer/CommandLineTools/usr/bin/make
+# makefile (from `../MakeVars', line 12)
+CFLAGS = -Wall -g $(INCLUDE) $(DEFINE)
+# makefile (from `../MakeVars', line 1)
+MAKEFILE_LIST :=  Makefile ../MakeVars
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+__CFBundleIdentifier = com.microsoft.VSCode
+# environment
+VSCODE_IPC_HOOK_EXTHOST = /var/folders/qz/r6rczvz16dd0xdb4zc7yh7580000gn/T/vscode-ipc-96e4e1e3-76ed-4fe6-b7b7-91b883da7e0f.sock
+# environment
+VSCODE_CWD = /Users/nicolascossio/UPM/ssdd/DMUTEX.2021
+# environment
+PATH = /opt/homebrew/opt/openjdk@11/bin:/Users/nicolascossio/.scripts:/opt/homebrew/opt/curl/bin:/opt/homebrew/opt/openssl@3/bin:/opt/homebrew/opt/openjdk/bin:/Users/nicolascossio/Library/Python/3.8/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/:/Library/TeX/texbin
+# makefile (from `../MakeVars', line 4)
+LD = ld
+# makefile (from `../MakeVars', line 13)
+ARFLAGS = 
+# makefile (from `Makefile', line 3)
+C_SRCS = $(shell ls *.c 2> /dev/null)
+# environment
+SSH_ENV = /Users/nicolascossio/.ssh/environment
+# makefile (from `../MakeVars', line 5)
+AR = ar 
+# environment
+VSCODE_LOG_STACK = false
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# makefile (from `../MakeVars', line 14)
+LDFLAGS = $(CFLAGS) $(LIBDIR)
+# makefile (from `../MakeVars', line 16)
+LIB = -lpthread
+# default
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
+# environment
+SSH_AUTH_SOCK = /var/folders/qz/r6rczvz16dd0xdb4zc7yh7580000gn/T//ssh-1r5w4gA9CNpW/agent.766
+# automatic
+%F = $(notdir $%)
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /Users/nicolascossio/UPM/ssdd/DMUTEX.2021
+# makefile (from `Makefile', line 4)
+C_OBJS = $(patsubst %.c,%.o,$(C_SRCS))
+# environment
+SSH_AGENT_PID = 768
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /Users/nicolascossio
+# default
+MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
+# environment
+VSCODE_CLI = 1
+# environment
+VSCODE_CODE_CACHE_PATH = /Users/nicolascossio/Library/Application Support/Code/CachedData/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5
+# environment
+LOGNAME = nicolascossio
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# makefile (from `../MakeVars', line 6)
+RANLIB = ranlib
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+XPC_FLAGS = 0x0
+# environment
+COLORTERM = truecolor
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+LC_TERMINAL = iTerm2
+# environment
+SHLVL = 4
+# makefile (from `../MakeVars', line 3)
+CC = cc
+# makefile (from `Makefile', line 5)
+CURR_DIR = $(shell basename `pwd`)
+# environment
+JAVA_HOME = /Users/nicolascossio/.jenv/versions/openjdk64-11.0.15
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = nicolascossio
+# makefile
+.DEFAULT_GOAL := all
+# makefile (from `../MakeVars', line 8)
+INCLUDE = 
+# environment
+TERM_SESSION_ID = w0t1p0:896BA228-7B18-45EB-9893-5BAE0C9625B4
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
+# makefile (from `../MakeVars', line 10)
+LIBDIR = 
+# environment
+TERM_PROGRAM = iTerm.app
+# default
+.VARIABLES := 
+# environment
+TMPDIR = /var/folders/qz/r6rczvz16dd0xdb4zc7yh7580000gn/T/
+# automatic
+*F = $(notdir $*)
+# makefile (from `../MakeVars', line 1)
+OS = $(shell uname -s)
+# environment
+VSCODE_IPC_HOOK = /Users/nicolascossio/Library/Application Support/Code/1.67.2-main.sock
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+TERM_PROGRAM_VERSION = 3.4.15
+# environment
+XPC_SERVICE_NAME = 0
+# environment
+LC_TERMINAL_VERSION = 3.4.15
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+ITERM_SESSION_ID = w0t1p0:896BA228-7B18-45EB-9893-5BAE0C9625B4
+# environment
+COLORFGBG = 7;0
+# environment
+__CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
+# environment
+COMMAND_MODE = unix2003
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# environment
+ITERM_PROFILE = Default
+# environment
+LC_ALL = C
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# makefile (from `../MakeVars', line 9)
+DEFINE = 
+# environment
+MAKELEVEL := 1
+# environment
+LANG = C
+# environment
+TERM = xterm-256color
+# environment
+VSCODE_PID = 85458
+# variable set hash-table stats:
+# Load=91/1024=9%, Rehash=0, Collisions=9/132=7%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 16777231, inode 14265315): 10 files, no impossibilities.
+
+# 10 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+%.o: %.c
+#  commands to execute (from `Makefile', line 17):
+	$(CC) $(CFLAGS) -c $< 
+	
+
+# 1 implicit rules, 0 (0.0%) terminal.
+
+# Files
+
+all: .INDEX fichero.o logger.o main.o procesos.o
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/6=0%
+
+# Not a target:
+procesos.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2020-10-06 09:37:10
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+fichero.o: fichero.c
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: `fichero'
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := fichero.o
+# automatic
+# % := 
+# automatic
+# * := fichero
+# automatic
+# + := fichero.c
+# automatic
+# | := 
+# automatic
+# < := fichero.c
+# automatic
+# ^ := fichero.c
+# automatic
+# ? := fichero.c
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=3/15=20%
+#  commands to execute (from `Makefile', line 17):
+	$(CC) $(CFLAGS) -c $< 
+	
+
+# Not a target:
+../MakeVars:
+#  Implicit rule search has been done.
+#  Last modified 2020-10-06 09:42:00
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+logger.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+fichero.c:
+#  Implicit rule search has been done.
+#  Last modified 2020-10-06 09:37:10
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+.INDEX: fichero.o logger.o main.o procesos.o
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/6=0%
+#  commands to execute (from `Makefile', line 10):
+	@rm -f .INDEX
+	@(for i in $(C_OBJS); \
+	do \
+	echo "$(CURR_DIR)/$$i " >> .INDEX; \
+	done)
+	
+
+# Not a target:
+main.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+clean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+ 
+#  commands to execute (from `Makefile', line 20):
+	rm -f *.o
+	rm -f *~ .INDEX
+	
+
+# files hash-table stats:
+# Load=12/1024=1%, Rehash=0, Collisions=1/37=3%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 2
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+# strcache free: total = 4075 / max = 4075 / min = 4075 / avg = 4075
+
+# Finished Make data base on Sat May 21 11:55:43 2022
+
+ 
+make: *** [dirs] Error 1
+
+
+# Make data base, printed on Sat May 21 11:55:43 2022
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# makefile (from `Makefile', line 3)
+DIRS = Proceso Controlador
+# environment
+ELECTRON_NO_ATTACH_CONSOLE = 1
+# environment
+LC_CTYPE = UTF-8
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# makefile
+CURDIR := /Users/nicolascossio/UPM/ssdd/DMUTEX.2021
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-gb","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /usr/bin/make
+# makefile (from `MakeVars', line 12)
+CFLAGS = -Wall -g $(INCLUDE) $(DEFINE)
+# makefile (from `MakeVars', line 1)
+MAKEFILE_LIST :=  Makefile MakeVars
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+__CFBundleIdentifier = com.microsoft.VSCode
+# environment
+VSCODE_IPC_HOOK_EXTHOST = /var/folders/qz/r6rczvz16dd0xdb4zc7yh7580000gn/T/vscode-ipc-96e4e1e3-76ed-4fe6-b7b7-91b883da7e0f.sock
+# environment
+VSCODE_CWD = /Users/nicolascossio/UPM/ssdd/DMUTEX.2021
+# environment
+PATH = /opt/homebrew/opt/openjdk@11/bin:/Users/nicolascossio/.scripts:/opt/homebrew/opt/curl/bin:/opt/homebrew/opt/openssl@3/bin:/opt/homebrew/opt/openjdk/bin:/Users/nicolascossio/Library/Python/3.8/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin/:/Library/TeX/texbin
+# makefile (from `MakeVars', line 4)
+LD = ld
+# makefile (from `MakeVars', line 13)
+ARFLAGS = 
+# environment
+SSH_ENV = /Users/nicolascossio/.ssh/environment
+# makefile (from `MakeVars', line 5)
+AR = ar 
+# environment
+VSCODE_LOG_STACK = false
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# makefile (from `MakeVars', line 14)
+LDFLAGS = $(CFLAGS) $(LIBDIR)
+# makefile (from `MakeVars', line 16)
+LIB = -lpthread
+# default
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
+# environment
+SSH_AUTH_SOCK = /var/folders/qz/r6rczvz16dd0xdb4zc7yh7580000gn/T//ssh-1r5w4gA9CNpW/agent.766
+# automatic
+%F = $(notdir $%)
+# makefile (from `Makefile', line 9)
+CONTROLADOR_OBJ = $(shell cat Controlador/.INDEX)
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /Users/nicolascossio/UPM/ssdd/DMUTEX.2021
+# environment
+SSH_AGENT_PID = 768
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /Users/nicolascossio
+# default
+MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
+# environment
+VSCODE_CLI = 1
+# environment
+VSCODE_CODE_CACHE_PATH = /Users/nicolascossio/Library/Application Support/Code/CachedData/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5
+# environment
+LOGNAME = nicolascossio
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# makefile (from `MakeVars', line 6)
+RANLIB = ranlib
+# makefile (from `Makefile', line 10)
+PROCESO_OBJ = $(shell cat Proceso/.INDEX)
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+XPC_FLAGS = 0x0
+# environment
+COLORTERM = truecolor
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+LC_TERMINAL = iTerm2
+# environment
+SHLVL = 3
+# makefile (from `MakeVars', line 3)
+CC = cc
+# environment
+JAVA_HOME = /Users/nicolascossio/.jenv/versions/openjdk64-11.0.15
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = nicolascossio
+# makefile
+.DEFAULT_GOAL := all
+# makefile (from `MakeVars', line 8)
+INCLUDE = 
+# default
+MAKECMDGOALS := all
+# environment
+TERM_SESSION_ID = w0t1p0:896BA228-7B18-45EB-9893-5BAE0C9625B4
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
+# makefile (from `MakeVars', line 10)
+LIBDIR = 
+# environment
+TERM_PROGRAM = iTerm.app
+# default
+.VARIABLES := 
+# environment
+TMPDIR = /var/folders/qz/r6rczvz16dd0xdb4zc7yh7580000gn/T/
+# automatic
+*F = $(notdir $*)
+# makefile (from `MakeVars', line 1)
+OS = $(shell uname -s)
+# environment
+VSCODE_IPC_HOOK = /Users/nicolascossio/Library/Application Support/Code/1.67.2-main.sock
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+TERM_PROGRAM_VERSION = 3.4.15
+# environment
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.11937468.11937474.983A451F-537B-495A-A728-26C0B4A0710C
+# environment
+LC_TERMINAL_VERSION = 3.4.15
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+ITERM_SESSION_ID = w0t1p0:896BA228-7B18-45EB-9893-5BAE0C9625B4
+# environment
+COLORFGBG = 7;0
+# environment
+__CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
+# environment
+COMMAND_MODE = unix2003
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# environment
+ITERM_PROFILE = Default
+# environment
+LC_ALL = C
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# makefile (from `MakeVars', line 9)
+DEFINE = 
+# environment
+MAKELEVEL := 0
+# environment
+LANG = C
+# environment
+TERM = xterm-256color
+# environment
+VSCODE_PID = 85458
+# variable set hash-table stats:
+# Load=92/1024=9%, Rehash=0, Collisions=8/131=6%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 16777231, inode 14265309): 10 files, no impossibilities.
+
+# 10 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+all: dirs bin
+#  Command-line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/5=0%
+
+bin: proceso controlador
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-04-24 18:38:34
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+proceso:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 25):
+	$(CC) $(CFLAGS) -o proceso $(PROCESO_OBJ) $(LIB)
+	
+
+# Not a target:
+MakeVars:
+#  Implicit rule search has been done.
+#  Last modified 2020-10-06 09:42:00
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+dirs:
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: `'
+#  Modification time never checked.
+#  File has been updated.
+#  Failed to be updated.
+# automatic
+# @ := dirs
+# automatic
+# % := 
+# automatic
+# * := 
+# automatic
+# + := 
+# automatic
+# | := 
+# automatic
+# < := 
+# automatic
+# ^ := 
+# automatic
+# ? := 
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=2/13=15%
+#  commands to execute (from `Makefile', line 15):
+	@(for i in $(DIRS) ; \
+	do $(MAKE) -C $$i ; \
+	done)
+	
+
+controlador:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 22):
+	$(CC) $(CFLAGS) -o controlador $(CONTROLADOR_OBJ) $(LIB)
+	
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+entrega: clean
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 38):
+	@(tar cf ../dmutex.2021.entrega.tar Proceso ; \
+	rm -f ../dmutex.2021.entrega.tar.gz ; \
+	gzip -9 ../dmutex.2021.entrega.tar  ; \
+	mv ../dmutex.2021.entrega.tar.gz .  ; \
+	echo "Fichero de entrega generado dmutex.2021.entrega.tar.gz")
+	
+
+clean: clean-dirs
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 28):
+	rm -f *.o
+	rm -f *~
+	rm -f controlador proceso core
+	
+
+clean-dirs:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+ 
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 33):
+	@(for i in $(DIRS) ; \
+	do $(MAKE) -C $$i clean ; \
+	done)
+	
+
+# files hash-table stats:
+# Load=12/1024=1%, Rehash=0, Collisions=0/34=0%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 2
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+# strcache free: total = 4078 / max = 4078 / min = 4078 / avg = 4078
+
+# Finished Make data base on Sat May 21 11:55:43 2022
+
+ 
