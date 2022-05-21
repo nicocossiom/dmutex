@@ -1,3 +1,11 @@
 {
-    "makefile.extensionOutputFolder": "./.vscode"
+	"makefile.extensionOutputFolder": "./.vscode",
+	"sonarlint.pathToCompileCommands": "/Users/nicolascossio/UPM/SD/DMUTEX.2021/compile_commands.json",
+	"makefile.launchConfigurations": [
+		{
+			"cwd": "/Users/nicolascossio/UPM/SD/DMUTEX.2021",
+			"binaryPath": "/Users/nicolascossio/UPM/SD/DMUTEX.2021/controlador",
+			"binaryArgs": []
+		}
+	]
 }

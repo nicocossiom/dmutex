@@ -1,1 +1,7 @@
 .DS_STORE
+*.o
+.vscode/*.log
+.vscode/configurationCache.log
+contolador
+proceso
+.vscode/configurationCache.log

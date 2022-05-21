@@ -1,37 +1,32 @@
-make --dry-run --always-make --keep-going --print-directory
-cat: Controlador/.INDEX: No such file or directory
+make --dry-run --keep-going --print-directory
+cat: ControladorDir/.INDEX: No such file or directory
 
-cat: Proceso/.INDEX: No such file or directory
+cat: ProcesoDir/.INDEX: No such file or directory
 
-make: Entering directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021'
+make: Entering directory `/Users/nicolascossio/UPM/SD/DMUTEX.2021'
 (for i in Proceso Controlador ; \
           do /Library/Developer/CommandLineTools/usr/bin/make -C $i ; \
           done)
  
-make[1]: Entering directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021/Proceso'
-cc -Wall -g   -c main.c 
-rm -f .INDEX
-(for i in main.o; \
-	do \
-	echo "Proceso/$i " >> .INDEX; \
-	done)
-make[1]: Leaving directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021/Proceso'
-make[1]: Entering directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021/Controlador'
-cc -Wall -g   -c fichero.c 
-cc -Wall -g   -c logger.c 
-cc -Wall -g   -c main.c 
-cc -Wall -g   -c procesos.c 
+make: Entering an unknown directory
+make: Leaving an unknown directory
  
-rm -f .INDEX
-(for i in fichero.o logger.o main.o procesos.o; \
-	do \
-	echo "Controlador/$i " >> .INDEX; \
-	done)
-make[1]: Leaving directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021/Controlador'
-cc -Wall -g   -o proceso  -lpthread
-cc -Wall -g   -o controlador  -lpthread
-make: Leaving directory `/Users/nicolascossio/UPM/ssdd/DMUTEX.2021'
- 
-cat: Proceso/.INDEX: No such file or directory
-cat: Controlador/.INDEX: No such file or directory
+make: *** Proceso: No such file or directory.  Stop.
 
+make: Entering an unknown directory
+make: Leaving an unknown directory
+ 
+make: *** Controlador: No such file or directory.  Stop.
+
+make: *** [dirs] Error 2
+
+cat: 
+ProcesoDir/.INDEX: No such file or directory
+
+cc -Wall -g   -o proceso  -lpthread
+ 
+cat: ControladorDir/.INDEX: No such file or directory
+
+cc -Wall -g   -o controlador  -lpthread
+make: Leaving directory `/Users/nicolascossio/UPM/SD/DMUTEX.2021'
+ 
