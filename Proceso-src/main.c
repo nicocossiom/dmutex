@@ -16,14 +16,17 @@
 #define MAX_N_PROCESSES 10
 #define MAX_LINE_SIZE 80
 #define MAX_SECTION_SIZE 20
+#define MSG 0
+#define LOCK 1
+#define OK 2
 
 typedef struct Message {
-    int tipoMensaje;
-    char nombreSeccionCritica[MAX_SECTION_SIZE];
+    int type;
+    char section[MAX_SECTION_SIZE];
     int LC[MAX_N_PROCESSES];
 } Message;
 
-    typedef struct Process {
+typedef struct Process {
     char *p_id;
     int p_port;
     int p_socket;
@@ -97,18 +100,41 @@ void receive() {
     // printf("%s: RECEIVE(MSG, %s)\n", process->p_id, process->p_id);
 }
 
-int send_msg(char *proc_id, char *type) {
+Message *create_Message(int type, char *section) {
+    Message *m = NULL;
+    switch (type) {
+        case 0: {
+            m = malloc(sizeof(Message));
+            m->type = type;
+            memcpy(m->LC, LC, MAX_N_PROCESSES * sizeof(int));
+        } break;
+
+        default:
+            break;
+    }
+    return m;
+}
+
+int send_msg(char *proc_id, int type) {
     Process *p = get_Process_in_arr(proc_id);
     if (p == NULL) {
         return -1;
     }
-    if (strcmp(type, "MSG")) {
-        printf("SEND(MSG,%s)\n", proc_id);
-        int msg = 0;
-        if (sendto(p->p_socket, &msg, sizeof(msg), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
-            perror("error in sendto MSG");
-            return -1;
-        }
+    switch (type) {
+        case MSG: {
+            printf("SEND(MSG,%s)\n", proc_id);
+            Message *msg = create_Message(MSG, NULL);
+            if (sendto(p->p_socket, &msg, sizeof(msg), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
+                perror("error in sendto MSG");
+                return -1;
+            }
+        } break;
+        case LOCK: {
+        } break;
+        case OK: {
+        } break;
+        default:
+            break;
     }
     return 0;
 }
@@ -187,7 +213,7 @@ int main(int argc, char *argv[]) {
         } else if (strcmp(line, "FINISH") == 0) {
             exit(0);
         } else if (strcmp(line, "EVENT") == 0) {
-            event();
+            tick();
             print_tick();
         } else if (strcmp(line, "RECIEVE") == 0) {
             receive();
@@ -196,7 +222,7 @@ int main(int argc, char *argv[]) {
             sscanf(line, "%[^:]: %s", command, proc_id);
             if (strcmp(command, "MESSAGETO")) {
                 tick();
-                send_msg(proc_id, "msg");
+                send_msg(proc_id, MSG);
             } else if (strcmp(command, "LOCK")) {
             } else if (strcmp(command, "UNLOCK")) {
             }
