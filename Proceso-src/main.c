@@ -23,6 +23,7 @@
 #define LOCK 1
 #define OK 2
 
+// message sent and recieved between processes
 typedef struct Message {
     // the type of message: MSG->0. LOCK->1. OK->2
     int type;
@@ -35,29 +36,59 @@ typedef struct Message {
 
 } Message;
 
+// A representation of a process
 typedef struct Process {
+    // this process'sidentifier
     char *p_id;
+
+    // this process's port
     int p_port;
+
+    // this process's socket
     int p_socket;
+
+    // this process's index in the LC
     int arr_index;
+
+    // this process's addrinfo
     struct addrinfo *addr;
 } Process;
 
-// This program's logical clock
+// A representation of a section
+typedef struct Section {
+    // this section id (name)
+    char section[MAX_SECTION_SIZE];
+
+    // this last clock given by a process to this section
+    int section_LC[MAX_N_PROCESSES];
+} Section;
+
+
+// This process's logical clock
 static int *LC;
-// This program's process
+
+// This process's process
 static Process *myself;
-// This program's # of processes
+
+// This process's # of processes
 static int N_processes = 0;
-// This program's array of processes
-// static Process *process_arr[MAX_N_PROCESSES];
-// This program's socket_fd
+
+// This process's socket_fd
 static int process_fd;
-// This program's socket_address
+
+// This process's socket_address
 struct sockaddr_in process_addr;
-// This program's socket_address_length
+
+// This process's socket_address_length
 socklen_t process_addr_len = sizeof(process_addr);
+
+// This process's map of all the processes connected
 static map *process_map;
+// This process's last section command argument, used when calling lock since map_visit doesn't accept function arguments
+char *g_section_placeholder;
+
+// This process's map of all the sections available
+static map *section_map;
 
 Process *create_Process(char *p_id, int p_port, int arr_index) {
     Process *newProcess = malloc(sizeof(Process));
@@ -127,7 +158,7 @@ void receive() {
     combine_clocks(message->LC);
     switch (message->type) {
         case MSG: {
-            printf("%s: RECEIVE(MSG, %s)\n", myself->p_id, message->sender_id);
+            printf("%s: RECEIVE(MSG,%s)\n", myself->p_id, message->sender_id);
         } break;
         case OK: {
         } break;
@@ -141,20 +172,28 @@ void receive() {
 }
 
 Message *create_Message(int type, char *section) {
-    Message *m = NULL;
-    switch (type) {
-        case MSG: {
-            m = malloc(sizeof(Message));
-            m->type = type;
-            strcpy(m->section, "MSG");
-            memcpy(m->LC, LC, N_processes * sizeof(int));
-            strcpy(m->sender_id, myself->p_id);
-        } break;
-
-        default:
-            break;
-    }
+    Message *m = malloc(sizeof(Message));
+    m->type = type;
+    strcpy(m->section, section);
+    memcpy(m->LC, LC, N_processes * sizeof(int));
+    strcpy(m->sender_id, myself->p_id);
     return m;
+}
+
+Section *create_Section(char *section_name) {
+    Section *s = malloc(sizeof(Section));
+    strcpy(s->section, section_name);
+    memcpy(s->section_LC, LC, N_processes * sizeof(int));
+    return s;
+}
+
+void send_msg_iter_map(void *key, void *v) {
+    Process *p = (Process *)v;
+    Message *msg = create_Message(LOCK, g_section_placeholder);
+    // we can use sizeof(Message) since we're not working with pointers
+    if (sendto(p->p_socket, msg, sizeof(Message), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
+        perror("error in sendto MSG");
+    }
 }
 
 int send_msg(char *proc_id, int type) {
@@ -176,6 +215,7 @@ int send_msg(char *proc_id, int type) {
         } break;
         case LOCK: {
             // TODO send_msg caso del LOCK
+            map_visit(process_map, send_msg_iter_map);
         } break;
         case OK: {
             // TODO send_msg caso del OK
@@ -184,6 +224,20 @@ int send_msg(char *proc_id, int type) {
             break;
     }
     return 0;
+}
+
+void section_save_if_needed_n_update_clock(char *section) {
+    int map_op;
+    map_get(section_map, section, &map_op);
+    if (map_op != 0) {
+        // create the section since it doesnt exist (it will have the mopst up to date clock)
+        Section *new_section = create_Section(section);
+        map_put(section_map, new_section->section, new_section);
+    } else {
+        // update section's clock
+        Section *s = map_get(section_map, section, &map_op);
+        memcpy(s->section_LC, LC, N_processes * sizeof(int));
+    }
 }
 
 void print_process(void *k, void *v) {
@@ -255,14 +309,12 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < N_processes; i++) {
         LC[i] = 0;  // Clock initialization
     }
-    // for (int i = 0; i < N_processes; i++) {
-    //     Process *p = process_arr[i];
-    //     fprintf(stderr, " {%s : %d} ", p->p_id, p->p_port);
-    //     LC[i] = 0;  // Clock initialization
-    // }
 
-    /* Procesar Acciones */
-    char command[MAX_LINE_SIZE], proc_id[MAX_LINE_SIZE];
+    // command to execute
+    char command[MAX_LINE_SIZE];
+
+    // command arg
+    char comm_arg[MAX_LINE_SIZE];
     for (; fgets(line, MAX_LINE_SIZE, stdin);) {
         if (strcmp(line, "GETCLOCK\n") == 0) {
             print_clock();
@@ -273,13 +325,17 @@ int main(int argc, char *argv[]) {
         } else if (strcmp(line, "RECEIVE\n") == 0) {
             receive();
         } else {
-            // TODO comprobar si funciona el parseo de comandos dobles
-            sscanf(line, "%s %s", command, proc_id);
+            sscanf(line, "%s %s", command, comm_arg);
             if (strcmp(command, "MESSAGETO") == 0) {
                 tick();
-                send_msg(proc_id, MSG);
+                send_msg(comm_arg, MSG);
             } else if (strcmp(command, "LOCK") == 0) {
-                // TODO implementar LOCL
+                // TODO implementar LOCK
+                tick();
+                section_save_if_needed_n_update_clock(g_section_placeholder);
+                g_section_placeholder = comm_arg;
+                send_msg(NULL, LOCK);
+
             } else if (strcmp(command, "UNLOCK") == 0) {
                 // TODO implementar UNLOCK
             }
