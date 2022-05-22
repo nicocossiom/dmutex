@@ -15,6 +15,7 @@
 #include <unistd.h>
 
 #include "map.h"
+#include "queue.h"
 
 #define MAX_N_PROCESSES 10
 #define MAX_LINE_SIZE 80
@@ -22,6 +23,7 @@
 #define MSG 0
 #define LOCK 1
 #define OK 2
+#define OKUNLOCK 3
 
 // message sent and recieved between processes
 typedef struct Message {
@@ -52,17 +54,27 @@ typedef struct Process {
 
     // this process's addrinfo
     struct addrinfo *addr;
+
 } Process;
 
 // A representation of a section
 typedef struct Section {
-    // this section id (name)
-    char section[MAX_SECTION_SIZE];
+    // this section's id (name)
+    char section_id[MAX_SECTION_SIZE];
 
-    // this last clock given by a process to this section
+    // this section's last clock given by a process to this section
     int section_LC[MAX_N_PROCESSES];
-} Section;
 
+    // this section's amount of OKs recieved
+    int okeys;
+
+    // this section's flag that indicates if some process has exlusive accces to it, if 0 yes, -1 if not
+    int is_locked;
+
+    // this section's queue of processes to be sent an OK message when unlocked
+    queue *process_queue;
+
+} Section;
 
 // This process's logical clock
 static int *LC;
@@ -84,12 +96,14 @@ socklen_t process_addr_len = sizeof(process_addr);
 
 // This process's map of all the processes connected
 static map *process_map;
+
 // This process's last section command argument, used when calling lock since map_visit doesn't accept function arguments
-char *g_section_placeholder;
+char g_section_placeholder[MAX_SECTION_SIZE];
 
 // This process's map of all the sections available
 static map *section_map;
 
+// creates a proces given its id port and position in the LC
 Process *create_Process(char *p_id, int p_port, int arr_index) {
     Process *newProcess = malloc(sizeof(Process));
     newProcess->p_id = strdup(p_id);
@@ -119,15 +133,13 @@ Process *create_Process(char *p_id, int p_port, int arr_index) {
     return newProcess;
 }
 
-void print_tick() {
+// +1 on this process's LC value
+void tick() {
+    LC[myself->arr_index] += 1;
     printf("%s: TICK\n", myself->p_id);
 }
 
-void tick() {
-    LC[myself->arr_index] += 1;
-    print_tick();
-}
-
+// prints this process's LC
 void print_clock() {
     printf("%s: LC[", myself->p_id);
     for (int i = 0; i < N_processes; i++) {
@@ -141,7 +153,8 @@ void print_clock() {
     }
 }
 
-void combine_clocks(int ext_LC[10]) {
+// combines this process's LC with the given LC, getting the max values for each of LC's positions
+void combine_LCs(int ext_LC[MAX_N_PROCESSES]) {
     for (int i = 0; i < N_processes; i++) {
         int local_k = LC[i];
         int ext_k = ext_LC[i];
@@ -151,26 +164,7 @@ void combine_clocks(int ext_LC[10]) {
     }
 }
 
-void receive() {
-    // TODO implementar receive para probar el MESSAGETO
-    Message *message = malloc(sizeof(Message));
-    recvfrom(process_fd, message, sizeof(Message), 0, (struct sockaddr *)&process_addr, &process_addr_len);
-    combine_clocks(message->LC);
-    switch (message->type) {
-        case MSG: {
-            printf("%s: RECEIVE(MSG,%s)\n", myself->p_id, message->sender_id);
-        } break;
-        case OK: {
-        } break;
-        case LOCK: {
-        } break;
-        default: {
-            perror("receive msg switch");
-        } break;
-    }
-    tick();
-}
-
+// creates a message given the message type and the section, it also includes the sender's id and its LC
 Message *create_Message(int type, char *section) {
     Message *m = malloc(sizeof(Message));
     m->type = type;
@@ -180,31 +174,41 @@ Message *create_Message(int type, char *section) {
     return m;
 }
 
+// creates a section given the section's name and intializes its values
 Section *create_Section(char *section_name) {
     Section *s = malloc(sizeof(Section));
-    strcpy(s->section, section_name);
+    strcpy(s->section_id, section_name);
     memcpy(s->section_LC, LC, N_processes * sizeof(int));
+    s->okeys = 0;
+    s->is_locked = -1;
+    s->process_queue = queue_create(0);
     return s;
 }
 
-void send_msg_iter_map(void *key, void *v) {
+/* func_entry_map_t that sends a lock message containing the type, section to be locked and this processe's LC,
+to all each process of the process map but itself (multicast) */
+void send_LOCK_msg_multicast_map(void *key, void *v) {
     Process *p = (Process *)v;
-    Message *msg = create_Message(LOCK, g_section_placeholder);
-    // we can use sizeof(Message) since we're not working with pointers
-    if (sendto(p->p_socket, msg, sizeof(Message), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
-        perror("error in sendto MSG");
+    // we send the message to everyone but ourselves
+    if (p->arr_index != myself->arr_index) {
+        Message *msg = create_Message(LOCK, g_section_placeholder);
+        printf("%s: SEND(LOCK,%s)\n", myself->p_id, p->p_id);
+        // we can use sizeof(Message) since we're not working with pointers
+        if (sendto(p->p_socket, msg, sizeof(Message), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
+            perror("error in sendto MSG");
+        }
     }
 }
 
+// sends the appropiate message depending on the given type MSG | LOCK | OK
 int send_msg(char *proc_id, int type) {
-    int map_op;
-    Process *p = map_get(process_map, proc_id, &map_op);
-    if (map_op == -1) {
-        return -1;
-    }
     switch (type) {
         case MSG: {
-            // TOTEST
+            int map_op;
+            Process *p = map_get(process_map, proc_id, &map_op);
+            if (map_op == -1) {
+                return -1;
+            }
             printf("%s: SEND(MSG,%s)\n", myself->p_id, proc_id);
             Message *msg = create_Message(MSG, NULL);
             // we can use sizeof(Message) since we're not working with pointers
@@ -214,11 +218,35 @@ int send_msg(char *proc_id, int type) {
             }
         } break;
         case LOCK: {
-            // TODO send_msg caso del LOCK
-            map_visit(process_map, send_msg_iter_map);
+            map_visit(process_map, send_LOCK_msg_multicast_map);
+        } break;
+        case OKUNLOCK: {
+            int map_op;
+            Section *section = map_get(section_map, g_section_placeholder, &map_op);
+            int queue_op = 0;
+            while (queue_length(section->process_queue) != 0) {
+                tick();
+                Process *p_to_ok = queue_pop_front(section->process_queue, &queue_op);
+                Message *msg = create_Message(OK, section->section_id);
+                // we can use sizeof(Message) since we're not working with pointers
+                if (sendto(p_to_ok->p_socket, msg, sizeof(Message), 0, p_to_ok->addr->ai_addr, p_to_ok->addr->ai_addrlen) < 0) {
+                    perror("error in sendto OK");
+                    return -1;
+                }
+                printf("%s: SEND(OK,%s)\n", myself->p_id, p_to_ok->p_id);
+            }
         } break;
         case OK: {
-            // TODO send_msg caso del OK
+            int map_op;
+            Process *p_to_ok = map_get(process_map, proc_id, &map_op);
+            tick();
+            fprintf(stdout, "%s: SEND(OK,%s)\n", myself->p_id, p_to_ok->p_id);
+            Message *msg = create_Message(OK, g_section_placeholder);
+            // we can use sizeof(Message) since we're not working with pointers
+            if (sendto(p_to_ok->p_socket, msg, sizeof(Message), 0, p_to_ok->addr->ai_addr, p_to_ok->addr->ai_addrlen) < 0) {
+                perror("error in sendto OK");
+                return -1;
+            }
         } break;
         default:
             break;
@@ -226,17 +254,63 @@ int send_msg(char *proc_id, int type) {
     return 0;
 }
 
-void section_save_if_needed_n_update_clock(char *section) {
+/* creates a section if it's not in this process's map and adds it to said map.
+Otherwhise it updates the given section's LC with this process's current one */
+Section *section_save_if_needed_n_update_clock(char *section, int opt) {
     int map_op;
-    map_get(section_map, section, &map_op);
-    if (map_op != 0) {
+    Section *s = map_get(section_map, section, &map_op);
+    if (map_op == -1) {
         // create the section since it doesnt exist (it will have the mopst up to date clock)
-        Section *new_section = create_Section(section);
-        map_put(section_map, new_section->section, new_section);
-    } else {
+        s = create_Section(section);
+        map_put(section_map, s->section_id, s);
+    }
+    if (opt == LOCK) {
         // update section's clock
-        Section *s = map_get(section_map, section, &map_op);
         memcpy(s->section_LC, LC, N_processes * sizeof(int));
+    }
+    return s;
+}
+
+// function that recieves the next struct Message and acts accordingly depending on type: MSG | OK | LOCK
+void receive() {
+    Message *message = malloc(sizeof(Message));
+    recvfrom(process_fd, message, sizeof(Message), 0, (struct sockaddr *)&process_addr, &process_addr_len);
+    combine_LCs(message->LC);
+    switch (message->type) {
+        case MSG: {
+            printf("%s: RECEIVE(MSG,%s)\n", myself->p_id, message->sender_id);
+            tick();
+
+        } break;
+        case OK: {
+            printf("%s: RECEIVE(OK,%s)\n", myself->p_id, message->sender_id);
+            tick();
+            int map_op;
+            Section *section = map_get(section_map, message->section, &map_op);
+            section->okeys++;
+            if (section->okeys == N_processes - 1) {
+                printf("%s: MUTEX(%s)\n", myself->p_id, (char *)section->section_id);
+                section->is_locked = 0;
+            }
+        } break;
+        case LOCK: {
+            printf("%s: RECEIVE(LOCK,%s)\n", myself->p_id, message->sender_id);
+            tick();
+            Section *section = section_save_if_needed_n_update_clock(message->section, LOCK);
+            strcpy(g_section_placeholder, message->section);
+            // section is not locked so we have to send an okey to the sender
+            if (section->is_locked == -1) {
+                send_msg(message->sender_id, OK);
+            } else {
+                // since section is locked we need to add the sender of the lock request
+                int map_op;
+                Process *p = map_get(process_map, message->sender_id, &map_op);
+                queue_push_back(section->process_queue, p);
+            }
+        } break;
+        default: {
+            perror("receive msg switch");
+        } break;
     }
 }
 
@@ -284,7 +358,7 @@ int main(int argc, char *argv[]) {
     Once we have all of them we will intialize the clocks
     */
     process_map = map_create(key_string, 0);
-
+    section_map = map_create(key_string, 0);
     for (; fgets(line, MAX_LINE_SIZE, stdin);) {
         if (!strcmp(line, "START\n"))
             break;
@@ -300,15 +374,16 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "Created new Process %s with port %d\n", process->p_id, process->p_port);
         }
     }
+    // LC creation
     N_processes = map_size(process_map);
     LC = (int *)malloc(sizeof(int) * N_processes);
-    // Logical clock creation
-    fprintf(stderr, "LIST OF REGISTERED PROCESSES: [");
-    map_visit(process_map, print_process);
-    fprintf(stderr, "]\n");
     for (int i = 0; i < N_processes; i++) {
         LC[i] = 0;  // Clock initialization
     }
+    // debug info
+    fprintf(stderr, "LIST OF REGISTERED PROCESSES: [");
+    map_visit(process_map, print_process);
+    fprintf(stderr, "]\n");
 
     // command to execute
     char command[MAX_LINE_SIZE];
@@ -326,18 +401,17 @@ int main(int argc, char *argv[]) {
             receive();
         } else {
             sscanf(line, "%s %s", command, comm_arg);
+            strcpy(g_section_placeholder, comm_arg);
             if (strcmp(command, "MESSAGETO") == 0) {
                 tick();
                 send_msg(comm_arg, MSG);
             } else if (strcmp(command, "LOCK") == 0) {
-                // TODO implementar LOCK
                 tick();
-                section_save_if_needed_n_update_clock(g_section_placeholder);
-                g_section_placeholder = comm_arg;
+                section_save_if_needed_n_update_clock(g_section_placeholder, -1);
                 send_msg(NULL, LOCK);
 
             } else if (strcmp(command, "UNLOCK") == 0) {
-                // TODO implementar UNLOCK
+                send_msg(NULL, OKUNLOCK);
             }
         }
     }
