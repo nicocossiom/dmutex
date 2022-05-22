@@ -13,6 +13,7 @@
 #include <string.h>
 #include <strings.h>
 #include <unistd.h>
+
 #include "map.h"
 
 #define MAX_N_PROCESSES 10
@@ -25,15 +26,12 @@
 typedef struct Message {
     // the type of message: MSG->0. LOCK->1. OK->2
     int type;
-
     // the section to be accessed by the sender
     char section[MAX_SECTION_SIZE];
-
     // the LC of the sender
     int LC[MAX_N_PROCESSES];
-
-    // the index of the sender on the LC
-    int sender_index;
+    // the id of the sender on the LC
+    char sender_id[10];
 
 } Message;
 
@@ -46,19 +44,20 @@ typedef struct Process {
 } Process;
 
 // This program's logical clock
-static int LC[MAX_N_PROCESSES];
+static int *LC;
 // This program's process
 static Process *myself;
 // This program's # of processes
-static int N_p_arr = 0;
+static int N_processes = 0;
 // This program's array of processes
-static Process *process_arr[MAX_N_PROCESSES];
+// static Process *process_arr[MAX_N_PROCESSES];
 // This program's socket_fd
 static int process_fd;
 // This program's socket_address
 struct sockaddr_in process_addr;
 // This program's socket_address_length
 socklen_t process_addr_len = sizeof(process_addr);
+static map *process_map;
 
 Process *create_Process(char *p_id, int p_port, int arr_index) {
     Process *newProcess = malloc(sizeof(Process));
@@ -89,15 +88,6 @@ Process *create_Process(char *p_id, int p_port, int arr_index) {
     return newProcess;
 }
 
-Process *get_Process_in_arr(char *proc_id) {
-    Process *process = NULL;
-    for (int i = 0; i < MAX_N_PROCESSES; i++) {
-        process = process_arr[i];
-        if (strcmp(process->p_id, proc_id) == 0) break;
-    }
-    return process;
-}
-
 void print_tick() {
     printf("%s: TICK\n", myself->p_id);
 }
@@ -109,8 +99,8 @@ void tick() {
 
 void print_clock() {
     printf("%s: LC[", myself->p_id);
-    for (int i = 0; i < N_p_arr; i++) {
-        if (i != N_p_arr - 1) {
+    for (int i = 0; i < N_processes; i++) {
+        if (i != N_processes - 1) {
             printf("%d,", LC[i]);
         }
 
@@ -121,7 +111,7 @@ void print_clock() {
 }
 
 void combine_clocks(int ext_LC[10]) {
-    for (int i = 0; i < N_p_arr; i++) {
+    for (int i = 0; i < N_processes; i++) {
         int local_k = LC[i];
         int ext_k = ext_LC[i];
         if (ext_k > local_k) {
@@ -130,23 +120,14 @@ void combine_clocks(int ext_LC[10]) {
     }
 }
 
-void decode_message(Message *msg) {
-    for (int i = 0; i < N_p_arr; i++) {
-        msg->LC[i] = ntohl(msg->LC[i]);
-    }
-    msg->sender_index = ntohl(msg->sender_index);
-    msg->type = ntohl(msg->type);
-}
-
 void receive() {
     // TODO implementar receive para probar el MESSAGETO
     Message *message = malloc(sizeof(Message));
     recvfrom(process_fd, message, sizeof(Message), 0, (struct sockaddr *)&process_addr, &process_addr_len);
-    // decode_message(message);
     combine_clocks(message->LC);
     switch (message->type) {
         case MSG: {
-            printf("%s: RECEIVE(MSG, %s)\n", myself->p_id, process_arr[message->sender_index]->p_id);
+            printf("%s: RECEIVE(MSG, %s)\n", myself->p_id, message->sender_id);
         } break;
         case OK: {
         } break;
@@ -162,12 +143,12 @@ void receive() {
 Message *create_Message(int type, char *section) {
     Message *m = NULL;
     switch (type) {
-        case 0: {
+        case MSG: {
             m = malloc(sizeof(Message));
             m->type = type;
-            strcpy(m->section, "");
-            memcpy(m->LC, LC, MAX_N_PROCESSES * sizeof(int));
-            m->sender_index = myself->arr_index;
+            strcpy(m->section, "MSG");
+            memcpy(m->LC, LC, N_processes * sizeof(int));
+            strcpy(m->sender_id, myself->p_id);
         } break;
 
         default:
@@ -177,8 +158,9 @@ Message *create_Message(int type, char *section) {
 }
 
 int send_msg(char *proc_id, int type) {
-    Process *p = get_Process_in_arr(proc_id);
-    if (p == NULL) {
+    int map_op;
+    Process *p = map_get(process_map, proc_id, &map_op);
+    if (map_op == -1) {
         return -1;
     }
     switch (type) {
@@ -204,12 +186,16 @@ int send_msg(char *proc_id, int type) {
     return 0;
 }
 
+void print_process(void *k, void *v) {
+    Process *p = (Process *)v;
+    fprintf(stderr, " {%s : %d} ", p->p_id, p->p_port);
+}
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Uso: proceso <ID>\n");
         return 1;
     }
-
     /* Establece el modo buffer de entrada/salida a linea */
     setvbuf(stdout, (char *)malloc(sizeof(char) * MAX_LINE_SIZE), _IOLBF, MAX_LINE_SIZE);
     setvbuf(stdin, (char *)malloc(sizeof(char) * MAX_LINE_SIZE), _IOLBF, MAX_LINE_SIZE);
@@ -243,30 +229,37 @@ int main(int argc, char *argv[]) {
     the same list, hence we can use a normal array of processes with each index identifying each process.
     Once we have all of them we will intialize the clocks
     */
+    process_map = map_create(key_string, 0);
+
     for (; fgets(line, MAX_LINE_SIZE, stdin);) {
         if (!strcmp(line, "START\n"))
             break;
         sscanf(line, "%[^:]: %d", proc, &udp_port);
         if (strcmp(proc, argv[1]) == 0) {
-            myself = create_Process(proc, udp_port, N_p_arr);
-            process_arr[N_p_arr] = myself;
-            N_p_arr++;
+            myself = create_Process(proc, udp_port, N_processes);
+            map_put(process_map, myself->p_id, myself);
+            N_processes++;
         } else {
-            Process *process = create_Process(proc, udp_port, N_p_arr);
-            process_arr[N_p_arr] = process;
-            N_p_arr++;
+            Process *process = create_Process(proc, udp_port, N_processes);
+            map_put(process_map, process->p_id, process);
+            N_processes++;
             fprintf(stderr, "Created new Process %s with port %d\n", process->p_id, process->p_port);
         }
     }
-
+    N_processes = map_size(process_map);
+    LC = (int *)malloc(sizeof(int) * N_processes);
     // Logical clock creation
     fprintf(stderr, "LIST OF REGISTERED PROCESSES: [");
-    for (int i = 0; i < N_p_arr; i++) {
-        Process *p = process_arr[i];
-        fprintf(stderr, " {%s : %d} ", p->p_id, p->p_port);
+    map_visit(process_map, print_process);
+    fprintf(stderr, "]\n");
+    for (int i = 0; i < N_processes; i++) {
         LC[i] = 0;  // Clock initialization
     }
-    fprintf(stderr, "]\n");
+    // for (int i = 0; i < N_processes; i++) {
+    //     Process *p = process_arr[i];
+    //     fprintf(stderr, " {%s : %d} ", p->p_id, p->p_port);
+    //     LC[i] = 0;  // Clock initialization
+    // }
 
     /* Procesar Acciones */
     char command[MAX_LINE_SIZE], proc_id[MAX_LINE_SIZE];
