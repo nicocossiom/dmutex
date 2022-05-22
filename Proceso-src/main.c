@@ -13,6 +13,8 @@
 #include <string.h>
 #include <strings.h>
 #include <unistd.h>
+#include "map.h"
+
 #define MAX_N_PROCESSES 10
 #define MAX_LINE_SIZE 80
 #define MAX_SECTION_SIZE 20
@@ -43,12 +45,19 @@ typedef struct Process {
     struct addrinfo *addr;
 } Process;
 
+// This program's logical clock
 static int LC[MAX_N_PROCESSES];
+// This program's process
 static Process *myself;
+// This program's # of processes
 static int N_p_arr = 0;
+// This program's array of processes
 static Process *process_arr[MAX_N_PROCESSES];
+// This program's socket_fd
 static int process_fd;
+// This program's socket_address
 struct sockaddr_in process_addr;
+// This program's socket_address_length
 socklen_t process_addr_len = sizeof(process_addr);
 
 Process *create_Process(char *p_id, int p_port, int arr_index) {
@@ -134,8 +143,19 @@ void receive() {
     Message *message = malloc(sizeof(Message));
     recvfrom(process_fd, message, sizeof(Message), 0, (struct sockaddr *)&process_addr, &process_addr_len);
     // decode_message(message);
-    printf("%s: RECEIVE(MSG, %s)\n", myself->p_id, process_arr[message->sender_index]->p_id);
     combine_clocks(message->LC);
+    switch (message->type) {
+        case MSG: {
+            printf("%s: RECEIVE(MSG, %s)\n", myself->p_id, process_arr[message->sender_index]->p_id);
+        } break;
+        case OK: {
+        } break;
+        case LOCK: {
+        } break;
+        default: {
+            perror("receive msg switch");
+        } break;
+    }
     tick();
 }
 
