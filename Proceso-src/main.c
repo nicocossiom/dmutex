@@ -21,9 +21,18 @@
 #define OK 2
 
 typedef struct Message {
+    // the type of message: MSG->0. LOCK->1. OK->2
     int type;
+
+    // the section to be accessed by the sender
     char section[MAX_SECTION_SIZE];
+
+    // the LC of the sender
     int LC[MAX_N_PROCESSES];
+
+    // the index of the sender on the LC
+    int sender_index;
+
 } Message;
 
 typedef struct Process {
@@ -39,6 +48,9 @@ static Process *myself;
 static int N_p_arr = 0;
 static Process *process_arr[MAX_N_PROCESSES];
 static int process_fd;
+struct sockaddr_in process_addr;
+socklen_t process_addr_len = sizeof(process_addr);
+
 Process *create_Process(char *p_id, int p_port, int arr_index) {
     Process *newProcess = malloc(sizeof(Process));
     newProcess->p_id = strdup(p_id);
@@ -89,15 +101,42 @@ void tick() {
 void print_clock() {
     printf("%s: LC[", myself->p_id);
     for (int i = 0; i < N_p_arr; i++) {
-        printf("%d,", LC[i]);
+        if (i != N_p_arr - 1) {
+            printf("%d,", LC[i]);
+        }
+
+        else {
+            printf("%d]\n", LC[i]);
+        }
     }
-    printf("]\n");
+}
+
+void combine_clocks(int ext_LC[10]) {
+    for (int i = 0; i < N_p_arr; i++) {
+        int local_k = LC[i];
+        int ext_k = ext_LC[i];
+        if (ext_k > local_k) {
+            LC[i] = ext_k;
+        }
+    }
+}
+
+void decode_message(Message *msg) {
+    for (int i = 0; i < N_p_arr; i++) {
+        msg->LC[i] = ntohl(msg->LC[i]);
+    }
+    msg->sender_index = ntohl(msg->sender_index);
+    msg->type = ntohl(msg->type);
 }
 
 void receive() {
-    // tick(process);
-    // print_tick(process);
-    // printf("%s: RECEIVE(MSG, %s)\n", process->p_id, process->p_id);
+    // TODO implementar receive para probar el MESSAGETO
+    Message *message = malloc(sizeof(Message));
+    recvfrom(process_fd, message, sizeof(Message), 0, (struct sockaddr *)&process_addr, &process_addr_len);
+    // decode_message(message);
+    printf("%s: RECEIVE(MSG, %s)\n", myself->p_id, process_arr[message->sender_index]->p_id);
+    combine_clocks(message->LC);
+    tick();
 }
 
 Message *create_Message(int type, char *section) {
@@ -106,7 +145,9 @@ Message *create_Message(int type, char *section) {
         case 0: {
             m = malloc(sizeof(Message));
             m->type = type;
+            strcpy(m->section, "");
             memcpy(m->LC, LC, MAX_N_PROCESSES * sizeof(int));
+            m->sender_index = myself->arr_index;
         } break;
 
         default:
@@ -122,16 +163,20 @@ int send_msg(char *proc_id, int type) {
     }
     switch (type) {
         case MSG: {
-            printf("SEND(MSG,%s)\n", proc_id);
+            // TOTEST
+            printf("%s: SEND(MSG,%s)\n", myself->p_id, proc_id);
             Message *msg = create_Message(MSG, NULL);
-            if (sendto(p->p_socket, &msg, sizeof(msg), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
+            // we can use sizeof(Message) since we're not working with pointers
+            if (sendto(p->p_socket, msg, sizeof(Message), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
                 perror("error in sendto MSG");
                 return -1;
             }
         } break;
         case LOCK: {
+            // TODO send_msg caso del LOCK
         } break;
         case OK: {
+            // TODO send_msg caso del OK
         } break;
         default:
             break;
@@ -149,7 +194,6 @@ int main(int argc, char *argv[]) {
     setvbuf(stdout, (char *)malloc(sizeof(char) * MAX_LINE_SIZE), _IOLBF, MAX_LINE_SIZE);
     setvbuf(stdin, (char *)malloc(sizeof(char) * MAX_LINE_SIZE), _IOLBF, MAX_LINE_SIZE);
     // Socket creation
-    struct sockaddr_in process_addr;
     if ((process_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
         perror("socket creation failed");
         exit(EXIT_FAILURE);
@@ -165,8 +209,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     // get the port which the socket is binded to
-    socklen_t len = sizeof(process_addr);
-    if (getsockname(process_fd, (struct sockaddr *)&process_addr, &len) == -1) {
+    if (getsockname(process_fd, (struct sockaddr *)&process_addr, &process_addr_len) == -1) {
         perror("getsockname");
         close(process_fd);
         exit(EXIT_FAILURE);
@@ -203,28 +246,29 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, " {%s : %d} ", p->p_id, p->p_port);
         LC[i] = 0;  // Clock initialization
     }
-    fprintf(stderr, "]");
+    fprintf(stderr, "]\n");
 
     /* Procesar Acciones */
     char command[MAX_LINE_SIZE], proc_id[MAX_LINE_SIZE];
     for (; fgets(line, MAX_LINE_SIZE, stdin);) {
-        if (strcmp(line, "GETCLOCK") == 0) {
+        if (strcmp(line, "GETCLOCK\n") == 0) {
             print_clock();
-        } else if (strcmp(line, "FINISH") == 0) {
+        } else if (strcmp(line, "FINISH\n") == 0) {
             exit(0);
-        } else if (strcmp(line, "EVENT") == 0) {
+        } else if (strcmp(line, "EVENT\n") == 0) {
             tick();
-            print_tick();
-        } else if (strcmp(line, "RECIEVE") == 0) {
+        } else if (strcmp(line, "RECEIVE\n") == 0) {
             receive();
-            print_tick();
         } else {
-            sscanf(line, "%[^:]: %s", command, proc_id);
-            if (strcmp(command, "MESSAGETO")) {
+            // TODO comprobar si funciona el parseo de comandos dobles
+            sscanf(line, "%s %s", command, proc_id);
+            if (strcmp(command, "MESSAGETO") == 0) {
                 tick();
                 send_msg(proc_id, MSG);
-            } else if (strcmp(command, "LOCK")) {
-            } else if (strcmp(command, "UNLOCK")) {
+            } else if (strcmp(command, "LOCK") == 0) {
+                // TODO implementar LOCL
+            } else if (strcmp(command, "UNLOCK") == 0) {
+                // TODO implementar UNLOCK
             }
         }
     }
