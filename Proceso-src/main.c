@@ -176,7 +176,7 @@ void combine_LCs(int ext_LC[MAX_N_PROCESSES]) {
 Message *Message_create(int type, char *section) {
     Message *m = malloc(sizeof(Message));
     m->type = type;
-    strcpy(m->section, section);
+    if (section!=NULL) strcpy(m->section, section);
     memcpy(m->LC, my_LC, N_processes * sizeof(int));
     strcpy(m->sender_id, myself->p_id);
     return m;
