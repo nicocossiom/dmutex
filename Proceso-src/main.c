@@ -46,9 +46,6 @@ typedef struct Process {
     // this process's port
     int p_port;
 
-    // this process's socket
-    int p_socket;
-
     // this process's index in the LC
     int arr_index;
 
@@ -126,18 +123,12 @@ Process *Process_create(char *p_id, int p_port, int arr_index) {
         perror("failed to resolve remote socket address");
         return NULL;
     }
-    int fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    if (fd == -1) {
-        perror("error on socket creation for a process");
-        return NULL;
-    }
-    newProcess->p_socket = fd;
     newProcess->addr = res;
     return newProcess;
 }
 
 void Process_destroy(Process *p) {
-    close(p->p_socket);
+    close(process_fd);
     free(p);
 }
 
@@ -176,7 +167,7 @@ void combine_LCs(int ext_LC[MAX_N_PROCESSES]) {
 Message *Message_create(int type, char *section) {
     Message *m = malloc(sizeof(Message));
     m->type = type;
-    if (section!=NULL) strcpy(m->section, section);
+    if (section != NULL) strcpy(m->section, section);
     memcpy(m->LC, my_LC, N_processes * sizeof(int));
     strcpy(m->sender_id, myself->p_id);
     return m;
@@ -208,7 +199,7 @@ void send_LOCK_msg_multicast_map(void *key, void *v) {
         Message *msg = Message_create(LOCK, g_section_placeholder);
         printf("%s: SEND(LOCK,%s)\n", myself->p_id, p->p_id);
         // we can use sizeof(Message) since we're not working with pointers
-        if (sendto(p->p_socket, msg, sizeof(Message), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
+        if (sendto(process_fd, msg, sizeof(Message), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
             perror("error in sendto MSG");
         }
     }
@@ -226,7 +217,7 @@ int send_msg(char *proc_id, int type) {
             printf("%s: SEND(MSG,%s)\n", myself->p_id, proc_id);
             Message *msg = Message_create(MSG, NULL);
             // we can use sizeof(Message) since we're not working with pointers
-            if (sendto(p->p_socket, msg, sizeof(Message), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
+            if (sendto(process_fd, msg, sizeof(Message), 0, p->addr->ai_addr, p->addr->ai_addrlen) < 0) {
                 perror("error in sendto MSG");
                 return -1;
             }
@@ -243,7 +234,7 @@ int send_msg(char *proc_id, int type) {
                 Process *p_to_ok = queue_pop_front(section->process_queue, &queue_op);
                 Message *msg = Message_create(OK, section->section_id);
                 // we can use sizeof(Message) since we're not working with pointers
-                if (sendto(p_to_ok->p_socket, msg, sizeof(Message), 0, p_to_ok->addr->ai_addr, p_to_ok->addr->ai_addrlen) < 0) {
+                if (sendto(process_fd, msg, sizeof(Message), 0, p_to_ok->addr->ai_addr, p_to_ok->addr->ai_addrlen) < 0) {
                     perror("error in sendto OK");
                     return -1;
                 }
@@ -264,7 +255,7 @@ int send_msg(char *proc_id, int type) {
             fprintf(stdout, "%s: SEND(OK,%s)\n", myself->p_id, p_to_ok->p_id);
             Message *msg = Message_create(OK, g_section_placeholder);
             // we can use sizeof(Message) since we're not working with pointers
-            if (sendto(p_to_ok->p_socket, msg, sizeof(Message), 0, p_to_ok->addr->ai_addr, p_to_ok->addr->ai_addrlen) < 0) {
+            if (sendto(process_fd, msg, sizeof(Message), 0, p_to_ok->addr->ai_addr, p_to_ok->addr->ai_addrlen) < 0) {
                 perror("error in sendto OK");
                 return -1;
             }
@@ -380,14 +371,14 @@ void receive() {
     free(message);
 }
 
-void print_process(void *k, void *v) {
-    Process *p = (Process *)v;
-    fprintf(stderr, " {%s : %d} ", p->p_id, p->p_port);
-}
+// void print_process(void *k, void *v) {
+//     Process *p = (Process *)v;
+// fprintf(stderr, " {%s : %d} ", p->p_id, p->p_port);
+// }
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        fprintf(stderr, "Uso: proceso <ID>\n");
+        // fprintf(stderr, "Uso: proceso <ID>\n");
         return 1;
     }
     /* Establece el modo buffer de entrada/salida a linea */
@@ -437,7 +428,7 @@ int main(int argc, char *argv[]) {
             Process *process = Process_create(proc, udp_port, N_processes);
             map_put(process_map, process->p_id, process);
             N_processes++;
-            fprintf(stderr, "Created new Process %s with port %d\n", process->p_id, process->p_port);
+            // fprintf(stderr, "Created new Process %s with port %d\n", process->p_id, process->p_port);
         }
     }
     // LC creation
@@ -447,9 +438,9 @@ int main(int argc, char *argv[]) {
         my_LC[i] = 0;  // Clock initialization
     }
     // debug info
-    fprintf(stderr, "LIST OF REGISTERED PROCESSES: [");
-    map_visit(process_map, print_process);
-    fprintf(stderr, "]\n");
+    // fprintf(stderr, "LIST OF REGISTERED PROCESSES: [");
+    // map_visit(process_map, print_process);
+    // fprintf(stderr, "]\n");
 
     // command to execute
     char command[MAX_LINE_SIZE];
