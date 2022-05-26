@@ -7,5 +7,11 @@
 			"binaryPath": "/Users/nicolascossio/UPM/SD/DMUTEX.2021/controlador",
 			"binaryArgs": []
 		}
-	]
+	],
+	"files.associations": {
+		"cerrno": "c",
+		"cstdarg": "c",
+		"streambuf": "c",
+		"*.tcc": "c"
+	}
 }

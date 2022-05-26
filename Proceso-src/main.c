@@ -290,8 +290,17 @@ Section *section_save_if_needed_n_update_clock(char *section, int opt) {
 // 2: LC2 -> LC1? if yes 1
 // 3: LC1 < LC2 : 0 if LC1's id is smaller than LC2's id, 1 otherwhise
 int compare_LCs(int LC1[MAX_N_PROCESSES], int LC2[MAX_N_PROCESSES], char *process_id, int step) {
+    // fprintf(stderr, "comparando relojes ");
     int min = 0;
     int bigger = 0;
+    // for (int i = 0; i < N_processes; i++) {
+    //     fprintf(stderr, "%d, ", LC1[i]);
+    // }
+    // fprintf(stderr, "\t");
+    // for (int i = 0; i < N_processes; i++) {
+    //     fprintf(stderr, "%d, ", LC2[i]);
+    // }
+    // fprintf(stderr, "\n");
     for (int i = 0; i < N_processes; i++) {
         int v1 = LC1[i];
         int v2 = LC2[i];
@@ -305,15 +314,17 @@ int compare_LCs(int LC1[MAX_N_PROCESSES], int LC2[MAX_N_PROCESSES], char *proces
     }
     // the external LC appears to be smaller, but there has to be at least one component strictly smaller
     if (min >= 1 && bigger != 1) {
-        return 1;
-    }
-    if (step != 2) {
+        // fprintf(stderr, "1o es mayor");
+        return 0;
+    } else if (step != 2) {
         // we need to check if LC2 is smaller than n1
         if (compare_LCs(LC2, LC1, process_id, 2) == 0) {
+            // fprintf(stderr, "segunda comp");
             return 1;
         }
         // precedence can't be determined, hence we compare the process's IDs
         Process *p = map_get(process_map, process_id, NULL);
+        // fprintf(stderr, "no se sabe, por id");
         return (myself->arr_index < p->arr_index) ? 0 : 1;
     }
     return -1;
@@ -346,6 +357,7 @@ void receive() {
             tick();
             Section *section = section_save_if_needed_n_update_clock(message->section, -1);
             strcpy(g_section_placeholder, message->section);
+            // fprintf(stderr, "\tpedido lock en esta seccion %d\n", section->is_lock_requested);
             // process has no lock request -> send OK
             if (section->is_lock_requested == 0) {
                 send_msg(message->sender_id, OK);
